@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <!-- Meta -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-compatible" content="IE=edge, chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimal-ui"
+    />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="copyright" content="http://arnaud-tessier.fr" />
+    <meta name="geo.placename" content="Bordeaux, Gironde" />
+    <meta name="geo.region" content="FR" />
+    <meta name="robots" content="index,follow" />
+    <meta name="description" content="RGB Color-Picker" />
+    <meta name="keywords" content="Outil, tool, couleur" />
+    <meta name="author" content="Arnaud TESSIER" />
+    <!-- Titre -->
+    <title>RGB Color-Picker</title>
+
+    <!-- Imports -->
+    <script
+      type="text/javascript"
+      src="./node_modules/vue/dist/vue.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="./main.css" />
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header class="navbar navbar-light bg-info">
+      <img
+        src="./assets/images/favicon.svg"
+        width="40"
+        height="40"
+        class="d-inline-block align-top navbar-brand"
+        alt="Arnaud TESSIER"
+      />
+      <h3 text-align="center">RGB Color-Picker</h3>
+    </header>
+
+    <!-- main -->
+    <div id="app" class="container">
+      <div class="row">
+        <div class="col-6">
+          <div class="col-12">
+            <hr />
+            <div class="form-group">
+              <label class="text-danger">Rouge :</label>
+              <input
+                v-model="red"
+                class="form-control"
+                type="number"
+                style="border-color: red"
+              />
+            </div>
+            <hr />
+            <div class="form-group">
+              <label class="text-success">Vert : </label>
+              <input
+                v-model="green"
+                class="form-control green"
+                type="number"
+                style="border-color: green"
+              />
+            </div>
+            <hr />
+            <div class="form-group">
+              <label class="text-primary">Bleu : </label>
+              <input
+                v-model="blue"
+                class="form-control blue"
+                type="number"
+                style="border-color: blue"
+              />
+            </div>
+            <hr />
+
+            <br /><br />
+            <div class="col-12">
+              <button v-on:click="saveSquare()" class="btn btn-primary">
+                Sauvegarder
+              </button>
+              <button v-on:click="reset()" class="btn btn-danger">
+                Annuler
+              </button>
+            </div>
+
+            <br /><br />
+            <hr />
+            <h3>Nombre de carrés : {{ nbrOfSquares }}</h3>
+            <hr />
+            <div
+              class="col-12"
+              v-if="nbrOfSquares"
+              style="margin-bottom: 150px"
+            >
+              <div
+                class="prevsquare"
+                v-for="square in squares"
+                :style="{ backgroundColor: square }"
+                @click="selectedSquare=square ; action()"
+              ></div>
+            </div>
+            <h3 v-else>Ajouter des couleurs !</h3>
+          </div>
+        </div>
+        <div class="col-6">
+          <div
+            id="rgbValue"
+            ref="rgbValue"
+            class="square mx-auto"
+            :style="{ backgroundColor: selectedSquare }"
+          ></div>
+          <h4 id="valueOfRGB" class="text-center mt-2">{{ squareResult() }}</h4>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="fixed-bottom bg-dark" id="mentions-bottom">
+      <div>
+        <p>
+          Ce site a été entièrement réalisé manuellement à l'aide des
+          technologies suivantes:<br
+        </p>
+      </div>
+      <div class="text-center footer-techno">
+        <img
+          src="./assets/images/html5.png"
+          alt="HTML5"
+          title="HTML5"
+          class="img-fluid rounded"
+        />
+        <img
+          src="./assets/images/css3.png"
+          alt="CSS3"
+          title="CSS3"
+          class="img-fluid rounded"
+        />
+        <img
+          src="./assets/images/bootstrap.png"
+          alt="Bootstrap"
+          title="Bootstrap"
+          class="img-fluid rounded"
+        />
+        <img
+          src="./assets/images/javascript.png"
+          alt="JavaScript"
+          title="JavaScript"
+          class="img-fluid rounded"
+        />
+        <img
+          src="./assets/images/vuejs.png"
+          alt="VueJS"
+          title="VueJS"
+          class="img-fluid rounded"
+        />
+      </div>
+    </div>
+
+    <!-- Vue.JS -->
+    <script type="text/javascript">
+      const vm = new Vue({
+        el: "#app",
+        data: function () {
+          return {
+            green: 0,
+            blue: 0,
+            red: 0,
+            squares: [],
+            selectedSquare: "",
+            color: [],
+            bgColor: "",
+          };
+        },
+        methods: {
+          resetColor() {
+            this.red = 0;
+            this.green = 0;
+            this.blue = 0;
+          },
+          saveSquare() {
+            this.squares.push(`rgb(${this.red},${this.green},${this.blue})`);
+            this.resetColor();
+            console.log(this.squares);
+          },
+          squareResult() {
+            setTimeout(function () {
+              document.getElementById(
+                "valueOfRGB"
+              ).innerHTML = window
+                .getComputedStyle(document.getElementById("rgbValue"), null)
+                .getPropertyValue("background-color");
+            }, 10);
+          },
+          action() {
+            vm.squareResult();
+          },
+          reset() {
+            this.squares = [];
+            this.resetColor();
+          },
+        },
+        computed: {
+          nbrOfSquares() {
+            return this.squares.length;
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
